@@ -1,8 +1,8 @@
-package com.github.roukanken42.intellijorikaplugin.listeners
+package com.roukanken.plugin.orika.listeners
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
-import com.github.roukanken42.intellijorikaplugin.services.MyProjectService
+import com.roukanken.plugin.orika.services.MyProjectService
 
 internal class MyProjectManagerListener : ProjectManagerListener {
 

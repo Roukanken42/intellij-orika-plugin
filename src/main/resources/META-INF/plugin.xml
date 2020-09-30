@@ -1,19 +1,19 @@
 <idea-plugin>
-    <id>com.github.roukanken42.intellijorikaplugin</id>
-    <name>intellij-orika-plugin</name>
+    <applicationListeners>
+        <listener class="com.roukanken.plugin.orika.listeners.MyProjectManagerListener"
+            topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </applicationListeners>
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="com.roukanken.plugin.orika.services.MyApplicationService"/>
+        <projectService serviceImplementation="com.roukanken.plugin.orika.services.MyProjectService"/>
+    </extensions>
     <vendor>roukanken42</vendor>
 
     <!-- Product and plugin compatibility requirements -->
     <!-- https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.roukanken42.intellijorikaplugin.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.roukanken42.intellijorikaplugin.services.MyProjectService"/>
-    </extensions>
+    <id>com.roukanken.plugin.orika</id>
 
-    <applicationListeners>
-        <listener class="com.github.roukanken42.intellijorikaplugin.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    <name>Orika</name>
 </idea-plugin>
