@@ -12,8 +12,15 @@
     <!-- Product and plugin compatibility requirements -->
     <!-- https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
 
     <id>com.roukanken.plugin.orika</id>
 
     <name>Orika</name>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <psi.referenceContributor language="JAVA"
+                                  implementation="com.roukanken.plugin.orika.codeinsight.references.OrikaReferenceContributor"/>
+    </extensions>
 </idea-plugin>

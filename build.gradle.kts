@@ -1,4 +1,6 @@
+import de.undercouch.gradle.tasks.download.Download
 import io.gitlab.arturbosch.detekt.Detekt
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.changelog.closure
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -16,6 +18,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.13.1"
     // ktlint linter - read more: https://github.com/JLLeitschuh/ktlint-gradle
     id("org.jlleitschuh.gradle.ktlint") version "9.4.0"
+    id("de.undercouch.download") version "4.0.4"
 }
 
 // Import variables from gradle.properties file
@@ -41,6 +44,13 @@ repositories {
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.13.1")
+
+    implementation("ma.glasnost.orika:orika-core:1.5.4")
+//    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
+
+    testImplementation("io.strikt:strikt-core:latest.release")
+//    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
+//    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
 }
 
 // Configure gradle-intellij-plugin plugin.
@@ -55,7 +65,7 @@ intellij {
 //  Plugin Dependencies:
 //  https://www.jetbrains.org/intellij/sdk/docs/basics/plugin_structure/plugin_dependencies.html
 //
-//  setPlugins("java")
+    setPlugins("java")
 }
 
 // Configure detekt plugin.
@@ -80,6 +90,37 @@ tasks {
     listOf("compileKotlin", "compileTestKotlin").forEach {
         getByName<KotlinCompile>(it) {
             kotlinOptions.jvmTarget = "1.8"
+        }
+    }
+
+    val libs = register<Sync>("libs") {
+        from(configurations.runtimeClasspath)
+        into("$buildDir/libs")
+        preserve {
+            include("intellij-orika-plugin-*.jar")
+        }
+        rename("orika-core-1.5.4.jar", "orika.jar")
+    }
+
+    val mockJdkVersion = "JDK-1.8"
+    val location = "https://github.com/JetBrains/intellij-community/raw/master/java/mock$mockJdkVersion"
+    val destination = "$buildDir/mock$mockJdkVersion"
+    val downloadMockJdk = register<Download>("downloadMockJdk") {
+        src(arrayOf(
+            "$location/jre/lib/annotations.jar",
+            "$location/jre/lib/rt.jar"
+        ))
+        dest("$destination/jre/lib/")
+        overwrite(false)
+        quiet(false)
+    }
+
+    test {
+//        useJUnitPlatform()
+        dependsOn(libs, downloadMockJdk)
+        testLogging {
+            exceptionFormat = TestExceptionFormat.FULL
+            showStandardStreams = true
         }
     }
 
